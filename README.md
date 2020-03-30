@@ -10,3 +10,12 @@
 - 默认使用7777端口
 - 首次部署在项目目录make build && make run
 - 更新重新构建make rebuild
+
+## 数据格式
+
+```
+{
+    "name": "Tom",
+    "data": {}
+}
+```
