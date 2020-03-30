@@ -4,6 +4,7 @@
 - /websocket ws连接地址
 - /websocket/list 查看在线用户
 - /websocket/test 测试用html页面
+- /websocket/push 消息推送接口
 
 ## 使用
 - 使用docker进行部署
