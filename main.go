@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"time"
-
 	//"time"
 )
 
@@ -27,8 +26,8 @@ var (
 	userList = map[string]*impl.Connection{}
 	// 请求参数
 	param struct {
-		Name   string      `json:"name"`
-		Data   interface{} `json:"data"`
+		Name string      `json:"name"`
+		Data interface{} `json:"data"`
 	}
 )
 
@@ -111,7 +110,7 @@ func main() {
 		if param.Name == "" {
 			r, _ = json.Marshal(&result{401, "请使用name参数指定接收人", nil})
 		} else {
-			if userList[param.Name].IsClosed {
+			if v, ok := userList[param.Name]; !ok || v.IsClosed {
 				delete(userList, param.Name) // 清理断开的连接
 				log.Println(param.Name + "------未上线")
 				r, _ = json.Marshal(&result{401, "用户已断开链接", nil})
