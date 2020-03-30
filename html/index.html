@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        *{
+            margin:0px;
+            padding:0px;
+        }
+    </style>
+</head>
+
+<body>
+<div style="margin-left:400px">
+    <h3>群聊天室</h3>
+    <div style="border:1px solid;width: 600px;height: 300px;">
+        <div id="msgArea" style="width:100%;height: 100%;text-align:start;resize: none;font-family: 微软雅黑;font-size: 20px;overflow-y: scroll"></div>
+    </div>
+    <div style="border:1px solid;width: 600px;height: 100px;">
+        <div style="width:100%;height: 100%;">
+            <textarea id="userMsg" style="width:100%;height: 100%;text-align:start;resize: none;font-family: 微软雅黑;font-size: 20px;">{ "name": "Tom", "data": { "age": 22 } }</textarea>
+        </div>
+    </div>
+    <div style="border:1px solid;width: 600px;height: 25px;">
+        <button style="float: right;" onclick="sendMsg()">发送</button>
+    </div>
+</div>
+</body>
+
+</html>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    var ws;
+    $(function(){
+        link();
+    })
+    function link () {
+        ws = new WebSocket("ws://"+ window.location.host +"/websocket");//连接服务器
+        ws.onopen = function(event){
+            console.log(event);
+            alert('连接了');
+        };
+        ws.onmessage = function (event) {
+            var date = new Date();
+            if (event.data !== "heartbeat") {
+                var msg = "<p>"+date.toLocaleString()+"</p>"+"<p>"+event.data+"</p>";
+                $("#msgArea").append(msg);
+            } else {
+                console.log(event.data)
+            }
+        }
+        ws.onclose = function(event){alert("已经与服务器断开连接\r\n当前连接状态："+this.readyState);};
+        ws.onerror = function(event){alert("WebSocket异常！");};
+    }
+    function sendMsg(){
+        var msg = $("#userMsg").val();
+        ws.send(msg);
+    }
+</script>
