@@ -8,6 +8,12 @@
             margin:0px;
             padding:0px;
         }
+        button {
+            float: left;
+            margin: 0.3em 5em;
+            width: 8em;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -23,7 +29,9 @@
         </div>
     </div>
     <div style="border:1px solid;width: 600px;height: 25px;">
-        <button style="float: right;" onclick="sendMsg()">发送</button>
+        <button onclick="link()">重连</button>
+        <button onclick="end()">关闭</button>
+        <button onclick="sendMsg()">发送</button>
     </div>
 </div>
 </body>
@@ -35,26 +43,32 @@
     $(function(){
         link();
     })
+    function push(data) {
+        var date = new Date();
+        var msg = "<p>"+date.toLocaleString()+"</p>"+"<p>"+data+"</p>";
+        $("#msgArea").append(msg);
+    }
     function link () {
         ws = new WebSocket("ws://"+ window.location.host +"/websocket");//连接服务器
         ws.onopen = function(event){
             console.log(event);
-            alert('连接了');
+            push('连接了');
         };
         ws.onmessage = function (event) {
-            var date = new Date();
-            if (event.data !== "heartbeat") {
-                var msg = "<p>"+date.toLocaleString()+"</p>"+"<p>"+event.data+"</p>";
-                $("#msgArea").append(msg);
+            if (event.data === `{"data": []}`) {
+                console.log("heartbeat")
             } else {
-                console.log(event.data)
+                push(event.data)
             }
         }
-        ws.onclose = function(event){alert("已经与服务器断开连接\r\n当前连接状态："+this.readyState);};
-        ws.onerror = function(event){alert("WebSocket异常！");};
+        ws.onclose = function(event){push("已经与服务器断开连接\r\n当前连接状态："+this.readyState);};
+        ws.onerror = function(event){push("WebSocket异常！");};
     }
     function sendMsg(){
         var msg = $("#userMsg").val();
         ws.send(msg);
+    }
+    function end() {
+        ws.close(3333, "主动关闭")
     }
 </script>
