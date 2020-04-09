@@ -61,7 +61,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		for {
 			// 每隔一秒发送一次心跳
-			if err = conn.WriteMessage([]byte("heartbeat")); err != nil {
+			if err = conn.WriteMessage([]byte(`{"data": [], "status": 100}"`)); err != nil {
 				return
 			}
 			time.Sleep(1 * time.Second)
