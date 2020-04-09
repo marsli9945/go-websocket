@@ -61,12 +61,11 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		)
 		for {
 			// 每隔一秒发送一次心跳
-			if err = conn.WriteMessage([]byte(`{"data": [], "status": 100}`)); err != nil {
+			if err = conn.WriteMessage([]byte(`{"data": []}`)); err != nil {
 				return
 			}
 			time.Sleep(1 * time.Second)
 		}
-
 	}()
 
 	for {
@@ -110,17 +109,38 @@ func main() {
 		if param.Name == "" {
 			r, _ = json.Marshal(&result{401, "请使用name参数指定接收人", nil})
 		} else {
-			if v, ok := userList[param.Name]; !ok || v.IsClosed {
-				delete(userList, param.Name) // 清理断开的连接
+			v, ok := userList[param.Name]
+
+			if !ok {
 				log.Println(param.Name + "------未上线")
 				r, _ = json.Marshal(&result{401, "用户已断开链接", nil})
-			} else {
+				_, _ = writer.Write(r)
+				return
+			}
+
+			again := 1
+			isOnline := true
+			for v.IsClosed {
+				if again > 3 {
+					isOnline = false
+					break
+				}
+				log.Printf("%s重试第%d次", param.Name, again)
+				time.Sleep(1 * time.Second)
+				again++
+			}
+
+			if isOnline {
 				err = userList[param.Name].WriteMessage(body)
 				if err != nil {
 					log.Println(err)
 				}
 				log.Println(param.Name + "+++++++发送成功")
 				r, _ = json.Marshal(&result{200, "推送成功", nil})
+			} else {
+				delete(userList, param.Name) // 清理断开的连接
+				log.Println(param.Name + "------未上线")
+				r, _ = json.Marshal(&result{401, "用户已断开链接", nil})
 			}
 		}
 
