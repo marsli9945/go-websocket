@@ -104,6 +104,8 @@ func main() {
 			log.Println(err)
 		}
 
+		log.Println(param.Name + "+++++++开始推送")
+
 		var r []byte
 
 		if param.Name == "" {
