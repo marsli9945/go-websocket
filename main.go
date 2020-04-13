@@ -23,11 +23,12 @@ var (
 	}
 	// 在线用户和链接凭据
 	userList = map[string]*impl.Connection{}
-	// 请求参数
-	param struct {
-		Name string      `json:"name"`
-		Data interface{} `json:"data"`
-	}
+
+	//// 请求参数
+	//param struct {
+	//	Name string      `json:"name"`
+	//	Data interface{} `json:"data"`
+	//}
 )
 
 // http返回参数
@@ -72,6 +73,12 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			goto ERR
 		}
 
+		// 请求参数
+		var param struct {
+			Name string      `json:"name"`
+			Data interface{} `json:"data"`
+		}
+
 		if err := json.Unmarshal(data, &param); err != nil {
 			log.Println(err)
 		}
@@ -100,6 +107,12 @@ func main() {
 		}
 
 		log.Println("param: " + string(body))
+
+		// 请求参数
+		var param struct {
+			Name string      `json:"user_name"`
+			Data interface{} `json:"data"`
+		}
 
 		err = json.Unmarshal(body, &param)
 		if err != nil {
