@@ -99,6 +99,9 @@ func main() {
 		if err != nil {
 			log.Println(err)
 		}
+
+		log.Println("param: " + string(body))
+
 		err = json.Unmarshal(body, &param)
 		if err != nil {
 			log.Println(err)
