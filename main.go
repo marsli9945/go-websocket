@@ -25,10 +25,10 @@ var (
 	userList = map[string]*impl.Connection{}
 
 	// 请求参数
-	param struct {
-		Name string      `json:"name"`
-		Data interface{} `json:"data"`
-	}
+	//param struct {
+	//	Name string      `json:"name"`
+	//	Data interface{} `json:"data"`
+	//}
 )
 
 // http返回参数
@@ -73,6 +73,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			goto ERR
 		}
 
+		var param struct {
+			Name string `json:"name"`
+		}
+
 		if err := json.Unmarshal(data, &param); err != nil {
 			log.Println(err)
 		}
@@ -101,6 +105,11 @@ func main() {
 		}
 
 		log.Println("param: " + string(body))
+
+		var param struct {
+			Name string      `json:"name"`
+			Data interface{} `json:"data"`
+		}
 
 		err = json.Unmarshal(body, &param)
 		if err != nil {
