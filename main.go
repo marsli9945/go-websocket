@@ -23,12 +23,6 @@ var (
 	}
 	// 在线用户和链接凭据
 	userList = map[string]*impl.Connection{}
-
-	// 请求参数
-	//param struct {
-	//	Name string      `json:"name"`
-	//	Data interface{} `json:"data"`
-	//}
 )
 
 // http返回参数
