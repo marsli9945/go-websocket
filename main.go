@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"github.com/gorilla/websocket"
+	"github.com/marsli9945/go-websocket/form"
 	"github.com/marsli9945/go-websocket/impl"
+	"github.com/marsli9945/go-websocket/logger"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -46,6 +48,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if conn, err = impl.InitConnection(wsConn); err != nil {
+		go logger.Push("socket_server_connect_failed", form.SendForm{})
 		goto ERR
 	}
 
@@ -67,13 +70,14 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			goto ERR
 		}
 
-		var param struct {
-			Name string `json:"name"`
-		}
+		var param form.SendForm
 
 		if err := json.Unmarshal(data, &param); err != nil {
 			log.Println(err)
 		}
+
+		// 连接成功
+		go logger.Push("socket_server_connect_success", param)
 
 		userList[param.Name] = conn
 
@@ -98,28 +102,29 @@ func main() {
 			log.Println(err)
 		}
 
-		log.Println("param: " + string(body))
+		log.Println("param:{}" + string(body))
 
-		var param struct {
-			Name string      `json:"name"`
-			Data interface{} `json:"data"`
-		}
+		var param form.SendForm
 
 		err = json.Unmarshal(body, &param)
 		if err != nil {
 			log.Println(err)
 		}
 
+		go logger.Push("socket_server_push_data_start", param)
+
 		log.Println(param.Name + "+++++++开始推送")
 
 		var r []byte
 
 		if param.Name == "" {
+			go logger.Push("socket_server_push_data_failed", param)
 			r, _ = json.Marshal(&result{401, "请使用name参数指定接收人", nil})
 		} else {
 			v, ok := userList[param.Name]
 
 			if !ok {
+				go logger.Push("socket_server_push_data_failed", param)
 				log.Println(param.Name + "------未上线")
 				r, _ = json.Marshal(&result{401, "用户已断开链接", nil})
 				_, _ = writer.Write(r)
@@ -143,9 +148,11 @@ func main() {
 				if err != nil {
 					log.Println(err)
 				}
+				go logger.Push("socket_server_push_data_success", param)
 				log.Println(param.Name + "+++++++发送成功")
 				r, _ = json.Marshal(&result{200, "推送成功", nil})
 			} else {
+				go logger.Push("socket_server_push_data_failed", param)
 				delete(userList, param.Name) // 清理断开的连接
 				log.Println(param.Name + "------未上线")
 				r, _ = json.Marshal(&result{401, "用户已断开链接", nil})
