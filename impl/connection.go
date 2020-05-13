@@ -3,6 +3,7 @@ package impl
 import (
 	"errors"
 	"github.com/gorilla/websocket"
+	"log"
 	"sync"
 )
 
@@ -12,36 +13,38 @@ type Connection struct {
 	// 用于存放数据
 	inChan chan []byte
 	// 用于读取数据
-	outChan chan []byte
+	outChan   chan []byte
 	closeChan chan byte
-	mutex sync.Mutex
+	mutex     sync.Mutex
 	// chan是否被关闭
 	IsClosed bool
+	// 连接持有人
+	Name string
 }
 
 // 读取Api
 func (conn *Connection) ReadMessage() (data []byte, err error) {
 	//select是Go中的一个控制结构，类似于用于通信的switch语句。每个case必须是一个通信操作，要么是发送要么是接收。 select随机执行一个可运行的case。如果没有case可运行，它将阻塞，直到有case可运行。一个默认的子句应该总是可运行的。
 	select {
-	case data = <- conn.inChan:
-	case <- conn.closeChan:
+	case data = <-conn.inChan:
+	case <-conn.closeChan:
 		err = errors.New("connection is closed")
 	}
 	return
 }
 
 // 发送Api
-func (conn *Connection) WriteMessage(data []byte) (err error)  {
+func (conn *Connection) WriteMessage(data []byte) (err error) {
 	select {
 	case conn.outChan <- data:
-	case <- conn.closeChan:
+	case <-conn.closeChan:
 		err = errors.New("connection is closed")
 	}
 	return
 }
 
 // 关闭连接的Api
-func (conn *Connection) Close()  {
+func (conn *Connection) Close() {
 	// 线程安全的Close，可以并发多次调用也叫做可重入的Close
 	_ = conn.wsConn.Close()
 	conn.mutex.Lock()
@@ -49,16 +52,17 @@ func (conn *Connection) Close()  {
 		// 关闭chan,但是chan只能关闭一次
 		close(conn.closeChan)
 		conn.IsClosed = true
+		log.Println("connect close:{}" + conn.Name)
 	}
 	conn.mutex.Unlock()
 }
 
 // 初始化长连接
-func InitConnection(wsConn *websocket.Conn) (conn *Connection, err error)  {
+func InitConnection(wsConn *websocket.Conn) (conn *Connection, err error) {
 	conn = &Connection{
-		wsConn: wsConn,
-		inChan: make(chan []byte, 1000),
-		outChan: make(chan []byte, 1000),
+		wsConn:    wsConn,
+		inChan:    make(chan []byte, 1000),
+		outChan:   make(chan []byte, 1000),
 		closeChan: make(chan byte, 1),
 	}
 
@@ -72,10 +76,10 @@ func InitConnection(wsConn *websocket.Conn) (conn *Connection, err error)  {
 }
 
 // 内部实现
-func (conn *Connection) readLoop()  {
+func (conn *Connection) readLoop() {
 	var (
 		data []byte
-		err error
+		err  error
 	)
 	for {
 		if _, data, err = conn.wsConn.ReadMessage(); err != nil {
@@ -84,7 +88,7 @@ func (conn *Connection) readLoop()  {
 		// 容易阻塞到这里，等待inChan有空闲的位置
 		select {
 		case conn.inChan <- data:
-		case <- conn.closeChan: // closeChan关闭的时候执行
+		case <-conn.closeChan: // closeChan关闭的时候执行
 			goto ERR
 		}
 	}
@@ -93,22 +97,21 @@ ERR:
 	conn.Close()
 }
 
-func (conn *Connection) writeLoop()  {
+func (conn *Connection) writeLoop() {
 	var (
 		data []byte
-		err error
+		err  error
 	)
 	for {
 		select {
-		case data = <- conn.outChan:
+		case data = <-conn.outChan:
 			if err = conn.wsConn.WriteMessage(websocket.TextMessage, data); err != nil {
 				goto ERR
 			}
-		case <- conn.closeChan:
+		case <-conn.closeChan:
 			goto ERR
 		}
 	}
 ERR:
 	conn.Close()
 }
-

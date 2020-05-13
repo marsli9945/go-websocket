@@ -79,6 +79,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		// 连接成功
 		go logger.Push("socket_server_connect_success", param)
 
+		conn.Name = param.Name
 		userList[param.Name] = conn
 
 		if err = conn.WriteMessage(data); err != nil {
