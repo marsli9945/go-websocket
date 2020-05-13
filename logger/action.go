@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/marsli9945/go-websocket/form"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -27,7 +26,4 @@ func Push(event string, param form.SendForm) {
 		panic(err)
 	}
 	defer resp.Body.Close()
-
-	result, _ := ioutil.ReadAll(resp.Body)
-	log.Println("log response:{}" + string(result))
 }

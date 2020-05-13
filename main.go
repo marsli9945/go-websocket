@@ -52,18 +52,21 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		goto ERR
 	}
 
-	go func() {
-		var (
-			err error
-		)
-		for {
-			// 每隔一秒发送一次心跳
-			if err = conn.WriteMessage([]byte(`{"data": []}`)); err != nil {
-				return
-			}
-			time.Sleep(1 * time.Second)
-		}
-	}()
+	// 连接成功
+	go logger.Push("socket_server_connect_success", form.SendForm{})
+
+	//go func() {
+	//	var (
+	//		err error
+	//	)
+	//	for {
+	//		// 每隔一秒发送一次心跳
+	//		if err = conn.WriteMessage([]byte(`{"data": []}`)); err != nil {
+	//			return
+	//		}
+	//		time.Sleep(1 * time.Second)
+	//	}
+	//}()
 
 	for {
 		if data, err = conn.ReadMessage(); err != nil {
@@ -76,11 +79,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 
-		// 连接成功
-		go logger.Push("socket_server_connect_success", param)
-
-		conn.Name = param.Name
-		userList[param.Name] = conn
+		if s := param.Data.(string); s == "login" {
+			conn.Name = param.Name
+			userList[param.Name] = conn
+		}
 
 		if err = conn.WriteMessage(data); err != nil {
 			goto ERR
