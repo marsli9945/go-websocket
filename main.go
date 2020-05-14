@@ -79,7 +79,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 
-		if s := param.Data.(string); s == "login" {
+		if param.Socket_method == "login" {
 			conn.Name = param.Name
 			userList[param.Name] = conn
 		}

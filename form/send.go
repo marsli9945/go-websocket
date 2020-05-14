@@ -9,4 +9,5 @@ type SendForm struct {
 	Service_version string      `json:"service_version"`
 	Device_id       string      `json:"device_id"`
 	User_id         int16       `json:"user_id"`
+	Socket_method   string      `json:"socket_method"`
 }
