@@ -80,6 +80,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if param.Socket_method == "login" {
+			log.Println("+++++++++++注册上线：" + param.Name)
 			conn.Name = param.Name
 			userList[param.Name] = conn
 		}
