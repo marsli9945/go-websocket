@@ -13,3 +13,5 @@ restart:
 	docker restart go-websocket
 stop:
 	docker stop go-websocket
+log:
+	docker logs -f go-websocket
