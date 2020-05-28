@@ -29,9 +29,9 @@ var (
 
 // http返回参数
 type result struct {
-	Code int
-	Msg  string
-	data interface{}
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
