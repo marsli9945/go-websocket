@@ -5,7 +5,7 @@ import "time"
 type LogContent struct {
 	Client_id  string
 	Device_id  string
-	User_id    int16
+	User_id    string
 	Event      string
 	Event_time int64
 	Project_id string
@@ -14,7 +14,7 @@ type LogContent struct {
 	Lib        Lib
 }
 
-func NewLogContent(event string, device_id string, user_id int16, properties Properties, lib Lib) *LogContent {
+func NewLogContent(event string, device_id string, user_id string, properties Properties, lib Lib) *LogContent {
 	return &LogContent{
 		Client_id:  "H5_5.0_tuyoo.tuyoo.0-hall20435.tuyoo.GA",
 		Device_id:  device_id,

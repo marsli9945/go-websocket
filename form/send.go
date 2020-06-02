@@ -8,6 +8,6 @@ type SendForm struct {
 	Model_name      string      `json:"model_name"`
 	Service_version string      `json:"service_version"`
 	Device_id       string      `json:"device_id"`
-	User_id         int16       `json:"user_id"`
+	User_id         string      `json:"user_id"`
 	Socket_method   string      `json:"socket_method"`
 }

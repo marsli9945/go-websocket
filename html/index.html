@@ -49,7 +49,7 @@
         $("#msgArea").append(msg);
     }
     function link () {
-        ws = new WebSocket("ws://"+ window.location.host +"/websocket");//连接服务器
+        ws = new WebSocket("wss://"+ window.location.host +"/websocket");//连接服务器
         ws.onopen = function(event){
             console.log(event);
             push('连接了');

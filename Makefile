@@ -2,8 +2,8 @@ build:
 	docker build -t go-websocket .
 rebuild:
 	docker stop go-websocket
-	docker build -t go-websocket .
 	docker rm go-websocket
+	docker build -t go-websocket .
 	docker run -dit -p 7777:7777 --name=go-websocket go-websocket
 run:
 	docker run -dit -p 7777:7777 --name=go-websocket go-websocket
