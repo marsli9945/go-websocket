@@ -181,8 +181,11 @@ func main() {
 	})
 
 	// 渲染html文件进行测试
-	http.HandleFunc("/websocket/test", func(writer http.ResponseWriter, request *http.Request) {
+	http.HandleFunc("/websocket/ws", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "html/index.html")
+	})
+	http.HandleFunc("/websocket/wss", func(writer http.ResponseWriter, request *http.Request) {
+		http.ServeFile(writer, request, "html/wss.html")
 	})
 
 	// 监听127.0.0.1:7777
