@@ -23,7 +23,7 @@ func Push(event string, param form.SendForm) {
 	client := &http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Post("http://47.95.216.127:9264/grow-analytics-log-server/log/send", "application/json;charset=utf-8;", bytes.NewBuffer(jsonStr))
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 	defer resp.Body.Close()
 }
