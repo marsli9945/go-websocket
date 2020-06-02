@@ -5,6 +5,7 @@ rebuild:
 	docker rm go-websocket
 	docker build -t go-websocket .
 	docker run -dit -p 7777:7777 --name=go-websocket go-websocket
+	docker start go-websocket
 run:
 	docker run -dit -p 7777:7777 --name=go-websocket go-websocket
 start:

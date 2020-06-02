@@ -38,7 +38,7 @@ func NewLib(lib_service_version string) *Lib {
 }
 
 type Properties struct {
-	Proj_project_id    int16
+	Proj_project_id    string
 	Proj_model_version string
 	Proj_service_name  string
 	Proj_model_name    string
@@ -46,7 +46,7 @@ type Properties struct {
 	Proj_cost_time     int64
 }
 
-func NewProperties(proj_project_id int16, proj_model_name string, proj_request_id int64) *Properties {
+func NewProperties(proj_project_id string, proj_model_name string, proj_request_id int64) *Properties {
 	return &Properties{
 		Proj_project_id:    proj_project_id,
 		Proj_model_version: "0.1.0",
