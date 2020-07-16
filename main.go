@@ -107,19 +107,21 @@ func main() {
 		}
 
 		log.Println("param:{}" + string(body))
+		var r []byte
 
 		var param form.SendForm
 
 		err = json.Unmarshal(body, &param)
 		if err != nil {
+			r, _ = json.Marshal(&result{401, "参数解析失败，json格式有误", err})
+			writer.Write(r)
 			log.Println(err)
+			return
 		}
 
 		go logger.Push("socket_server_push_data_start", param)
 
 		log.Println(param.Name + "+++++++开始推送")
-
-		var r []byte
 
 		if param.Name == "" {
 			go logger.Push("socket_server_push_data_failed", param)
