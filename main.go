@@ -113,10 +113,7 @@ func main() {
 
 		err = json.Unmarshal(body, &param)
 		if err != nil {
-			r, _ = json.Marshal(&result{401, "参数解析失败，json格式有误", err})
-			writer.Write(r)
 			log.Println(err)
-			return
 		}
 
 		go logger.Push("socket_server_push_data_start", param)
