@@ -105,7 +105,7 @@ func (conn *Connection) writeLoop() {
 
 	for {
 		for len(buff) > 0 {
-			go conn.sendMessage()
+			go conn.sendMessage(buff[0])
 			buff = buff[1:]
 		}
 
@@ -120,7 +120,7 @@ ERR:
 	conn.Close()
 }
 
-func (conn *Connection) sendMessage() {
+func (conn *Connection) sendMessage(data []byte) {
 	if err := conn.wsConn.WriteMessage(websocket.TextMessage, data); err != nil {
 		conn.Close()
 	}
