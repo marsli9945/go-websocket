@@ -100,14 +100,18 @@ ERR:
 func (conn *Connection) writeLoop() {
 	var (
 		data []byte
-		err  error
+		buff [][]byte
 	)
+
 	for {
+		for len(buff) > 0 {
+			go conn.sendMessage(buff[0])
+			buff = buff[1:]
+		}
+
 		select {
 		case data = <-conn.outChan:
-			if err = conn.wsConn.WriteMessage(websocket.TextMessage, data); err != nil {
-				goto ERR
-			}
+			buff = append(buff, data)
 		case <-conn.closeChan:
 			goto ERR
 		}
@@ -115,4 +119,10 @@ func (conn *Connection) writeLoop() {
 
 ERR:
 	conn.Close()
+}
+
+func (conn *Connection) sendMessage(data []byte) {
+	if err := conn.wsConn.WriteMessage(websocket.TextMessage, data); err != nil {
+		conn.Close()
+	}
 }

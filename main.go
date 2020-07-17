@@ -107,6 +107,7 @@ func main() {
 		}
 
 		log.Println("param:{}" + string(body))
+		var r []byte
 
 		var param form.SendForm
 
@@ -118,8 +119,6 @@ func main() {
 		go logger.Push("socket_server_push_data_start", param)
 
 		log.Println(param.Name + "+++++++开始推送")
-
-		var r []byte
 
 		if param.Name == "" {
 			go logger.Push("socket_server_push_data_failed", param)
