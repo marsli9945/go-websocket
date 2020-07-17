@@ -112,6 +112,7 @@ func (conn *Connection) writeLoop() {
 			goto ERR
 		}
 	}
+
 ERR:
 	conn.Close()
 }
