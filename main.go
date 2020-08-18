@@ -129,7 +129,7 @@ func main() {
 			if !ok {
 				go logger.Push("socket_server_push_data_failed", param)
 				log.Println(param.Name + "------未上线")
-				r, _ = json.Marshal(&result{401, "用户已断开链接", nil})
+				r, _ = json.Marshal(&result{401, param.Name + "已断开链接", nil})
 				_, _ = writer.Write(r)
 				return
 			}
