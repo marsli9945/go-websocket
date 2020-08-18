@@ -197,6 +197,9 @@ func main() {
 				r, _ = json.Marshal(&result{200, "操作成功", true})
 			}
 		}
+		writer.Header().Add("Access-Control-Allow-Origin", "*")
+		writer.Header().Add("Access-Control-Allow-Methods", "*")
+		writer.Header().Add("Access-Control-Allow-Headers", "*")
 		writer.Write(r)
 	})
 
