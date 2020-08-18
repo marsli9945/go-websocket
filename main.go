@@ -203,6 +203,14 @@ func main() {
 		writer.Write(r)
 	})
 
+	http.HandleFunc("/websocket/del", func(writer http.ResponseWriter, request *http.Request) {
+		for k, _ := range userList {
+			delete(userList, k)
+		}
+		r, _ := json.Marshal(&result{200, "操作成功", true})
+		writer.Write(r)
+	})
+
 	// 渲染html文件进行测试
 	http.HandleFunc("/websocket/ws", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "html/index.html")
