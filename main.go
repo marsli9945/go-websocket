@@ -179,6 +179,27 @@ func main() {
 		_, _ = writer.Write(list)
 	})
 
+	http.HandleFunc("/websocket/hasUser", func(writer http.ResponseWriter, request *http.Request) {
+		err := request.ParseForm()
+		if err != nil {
+			log.Println(err)
+		}
+
+		var r []byte
+		user := request.Form.Get("name")
+		if user == "" {
+			r, _ = json.Marshal(&result{401, "请使用name参数指定查询用户", nil})
+		} else {
+			connection := userList[user]
+			if connection == nil || connection.IsClosed {
+				r, _ = json.Marshal(&result{200, "操作成功", false})
+			} else {
+				r, _ = json.Marshal(&result{200, "操作成功", true})
+			}
+		}
+		writer.Write(r)
+	})
+
 	// 渲染html文件进行测试
 	http.HandleFunc("/websocket/ws", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "html/index.html")
