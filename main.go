@@ -153,12 +153,12 @@ func main() {
 				}
 				go logger.Push("socket_server_push_data_success", param)
 				log.Println(param.Name + "+++++++发送成功")
-				r, _ = json.Marshal(&result{200, "推送成功", nil})
+				r, _ = json.Marshal(&result{200, param.Name + "推送成功", nil})
 			} else {
 				go logger.Push("socket_server_push_data_failed", param)
 				delete(userList, param.Name) // 清理断开的连接
 				log.Println(param.Name + "------未上线")
-				r, _ = json.Marshal(&result{401, "用户已断开链接", nil})
+				r, _ = json.Marshal(&result{401, param.Name + "已断开链接", nil})
 			}
 		}
 
