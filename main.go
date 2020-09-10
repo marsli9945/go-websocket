@@ -153,7 +153,7 @@ func main() {
 				}
 				go logger.Push("socket_server_push_data_success", param)
 				log.Println(param.Name + "+++++++发送成功")
-				r, _ = json.Marshal(&result{200, param.Name + "推送成功", nil})
+				r, _ = json.Marshal(&result{0, param.Name + "推送成功", nil})
 			} else {
 				go logger.Push("socket_server_push_data_failed", param)
 				delete(userList, param.Name) // 清理断开的连接
@@ -192,9 +192,9 @@ func main() {
 		} else {
 			connection := userList[user]
 			if connection == nil || connection.IsClosed {
-				r, _ = json.Marshal(&result{200, "操作成功", false})
+				r, _ = json.Marshal(&result{0, "操作成功", false})
 			} else {
-				r, _ = json.Marshal(&result{200, "操作成功", true})
+				r, _ = json.Marshal(&result{0, "操作成功", true})
 			}
 		}
 		writer.Header().Add("Access-Control-Allow-Origin", "*")
@@ -207,7 +207,7 @@ func main() {
 		for k, _ := range userList {
 			delete(userList, k)
 		}
-		r, _ := json.Marshal(&result{200, "操作成功", true})
+		r, _ := json.Marshal(&result{0, "操作成功", true})
 		writer.Write(r)
 	})
 
