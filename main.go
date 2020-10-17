@@ -137,7 +137,7 @@ func main() {
 			again := 1
 			isOnline := true
 			for v.IsClosed {
-				if again > 3 {
+				if again > 30 {
 					isOnline = false
 					break
 				}
