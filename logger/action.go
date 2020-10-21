@@ -32,5 +32,6 @@ func Push(event string, param form.SendForm) {
 		log.Println(err)
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
+	log.Println("jsonStr:{}", string(jsonStr))
 	log.Println("body:{}", string(body))
 }
