@@ -52,6 +52,7 @@ type Properties struct {
 }
 
 func NewProperties(proj_project_id string, proj_model_name string, proj_request_id string) *Properties {
+	log.Println("proj_request_id:{}", proj_request_id)
 	strArr := strings.FieldsFunc(proj_request_id, func(r rune) bool {
 		if r == '-' {
 			return true
@@ -70,6 +71,6 @@ func NewProperties(proj_project_id string, proj_model_name string, proj_request_
 		Proj_service_name:  "websocket",
 		Proj_model_name:    proj_model_name,
 		Proj_request_id:    proj_request_id,
-		Proj_cost_time:     time.Now().Unix() - t,
+		Proj_cost_time:     time.Now().UnixNano()/1e6 - t,
 	}
 }
