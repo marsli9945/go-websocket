@@ -4,10 +4,10 @@ rebuild:
 	docker stop go-websocket
 	docker rm go-websocket
 	docker build -t go-websocket .
-	docker run -dit -p 7777:7777 --name=go-websocket go-websocket
+	docker run -e GAPI_HOST='https://gapics.touch4.me' -dit -p 7777:7777 --name=go-websocket go-websocket
 	docker start go-websocket
 run:
-	docker run -dit -p 7777:7777 --name=go-websocket go-websocket
+	docker run -e GAPI_HOST='https://gapics.touch4.me' -dit -p 7777:7777 --name=go-websocket go-websocket
 start:
 	docker start go-websocket
 restart:

@@ -25,6 +25,9 @@ var (
 	}
 	// 在线用户和链接凭据
 	userList = map[string]*impl.Connection{}
+
+	// 发送错误队列
+	resendList = map[string][][]byte{}
 )
 
 // http返回参数
@@ -83,6 +86,14 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("+++++++++++注册上线：" + param.Name)
 			conn.Name = param.Name
 			userList[param.Name] = conn
+
+			list, ok := resendList[param.Name]
+			if ok {
+				for _, v := range list {
+					conn.WriteMessage(v)
+				}
+				delete(resendList, param.Name)
+			}
 		}
 
 		if err = conn.WriteMessage(data); err != nil {
@@ -150,6 +161,15 @@ func main() {
 				err = userList[param.Name].WriteMessage(body)
 				if err != nil {
 					log.Println(err)
+					go logger.Push("socket_server_push_data_failed", param)
+					list, ok := resendList[param.Name]
+					if !ok {
+						resendList[param.Name] = [][]byte{}
+					}
+					list = append(list, body)
+
+					log.Println(param.Name + "+++++++发送失败")
+					r, _ = json.Marshal(&result{10, param.Name + "推送失败", nil})
 				}
 				go logger.Push("socket_server_push_data_success", param)
 				log.Println(param.Name + "+++++++发送成功")

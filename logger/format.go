@@ -1,6 +1,11 @@
 package logger
 
-import "time"
+import (
+	"log"
+	"strconv"
+	"strings"
+	"time"
+)
 
 type LogContent struct {
 	Client_id  string
@@ -42,17 +47,29 @@ type Properties struct {
 	Proj_model_version string
 	Proj_service_name  string
 	Proj_model_name    string
-	Proj_request_id    int64
+	Proj_request_id    string
 	Proj_cost_time     int64
 }
 
-func NewProperties(proj_project_id string, proj_model_name string, proj_request_id int64) *Properties {
+func NewProperties(proj_project_id string, proj_model_name string, proj_request_id string) *Properties {
+	strArr := strings.FieldsFunc(proj_request_id, func(r rune) bool {
+		if r == '-' {
+			return true
+		} else {
+			return false
+		}
+	})
+	t, err := strconv.ParseInt(strArr[0], 10, 64)
+	if err != nil {
+		log.Println(err)
+		t = 0
+	}
 	return &Properties{
 		Proj_project_id:    proj_project_id,
 		Proj_model_version: "0.1.0",
 		Proj_service_name:  "websocket",
 		Proj_model_name:    proj_model_name,
 		Proj_request_id:    proj_request_id,
-		Proj_cost_time:     time.Now().Unix() - proj_request_id,
+		Proj_cost_time:     time.Now().Unix() - t,
 	}
 }

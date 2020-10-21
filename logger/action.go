@@ -6,8 +6,11 @@ import (
 	"github.com/marsli9945/go-websocket/form"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
+
+var gapi_host = os.Getenv("GAPI_HOST") + "/api/ga/v1/grow-analytics-log-server/log/send"
 
 func Push(event string, param form.SendForm) {
 	lib := NewLib(param.Service_version)
@@ -21,7 +24,8 @@ func Push(event string, param form.SendForm) {
 
 	// 超时时间：5秒
 	client := &http.Client{Timeout: 5 * time.Second}
-	_, err = client.Post("http://47.95.216.127:9264/grow-analytics-log-server/log/send", "application/json;charset=utf-8;", bytes.NewBuffer(jsonStr))
+	resp, err := client.Post(gapi_host, "application/json;charset=utf-8;", bytes.NewBuffer(jsonStr))
+	defer resp.Body.Close()
 	if err != nil {
 		log.Println(err)
 	}
