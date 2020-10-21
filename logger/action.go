@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/marsli9945/go-websocket/form"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -24,9 +25,12 @@ func Push(event string, param form.SendForm) {
 
 	// 超时时间：5秒
 	client := &http.Client{Timeout: 5 * time.Second}
+	log.Println("gapi_host:{}", gapi_host)
 	resp, err := client.Post(gapi_host, "application/json;charset=utf-8;", bytes.NewBuffer(jsonStr))
 	defer resp.Body.Close()
 	if err != nil {
 		log.Println(err)
 	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	log.Println("body:{}", body)
 }
