@@ -8,28 +8,28 @@ import (
 )
 
 type LogContent struct {
-	client_id  string
-	device_id  string
-	user_id    string
-	event      string
-	event_time int64
-	project_id string
-	event_type string `json:"type"`
-	properties Properties
-	lib        Lib
+	Client_id  string     `json:"client_id"`
+	Device_id  string     `json:"device_id"`
+	User_id    string     `json:"user_id"`
+	Event      string     `json:"event"`
+	Event_time int64      `json:"event_time"`
+	Project_id string     `json:"project_id"`
+	Event_type string     `json:"type"`
+	Properties Properties `json:"properties"`
+	Lib        Lib        `json:"lib"`
 }
 
 func NewLogContent(event string, device_id string, user_id string, properties Properties, lib Lib) *LogContent {
 	return &LogContent{
-		client_id:  "H5_5.0_tuyoo.tuyoo.0-hall20435.tuyoo.GA",
-		device_id:  device_id,
-		user_id:    user_id,
-		event:      event,
-		event_time: time.Now().Unix(),
-		project_id: "20435",
-		event_type: "track",
-		properties: properties,
-		lib:        lib,
+		Client_id:  "H5_5.0_tuyoo.tuyoo.0-hall20435.tuyoo.GA",
+		Device_id:  device_id,
+		User_id:    user_id,
+		Event:      event,
+		Event_time: time.Now().Unix(),
+		Project_id: "20435",
+		Event_type: "track",
+		Properties: properties,
+		Lib:        lib,
 	}
 }
 
@@ -43,12 +43,12 @@ func NewLib(lib_service_version string) *Lib {
 }
 
 type Properties struct {
-	proj_project_id    string
-	proj_model_version string
-	proj_service_name  string
-	proj_model_name    string
-	proj_request_id    string
-	proj_cost_time     int64
+	Proj_project_id    string `json:"proj_project_id"`
+	Proj_model_version string `json:"proj_model_version"`
+	Proj_service_name  string `json:"proj_service_name"`
+	Proj_model_name    string `json:"proj_model_name"`
+	Proj_request_id    string `json:"proj_request_id"`
+	Proj_cost_time     int64  `json:"proj_cost_time"`
 }
 
 func NewProperties(proj_project_id string, proj_model_name string, proj_request_id string) *Properties {
@@ -71,11 +71,11 @@ func NewProperties(proj_project_id string, proj_model_name string, proj_request_
 	}
 
 	return &Properties{
-		proj_project_id:    proj_project_id,
-		proj_model_version: "0.1.0",
-		proj_service_name:  "websocket",
-		proj_model_name:    proj_model_name,
-		proj_request_id:    proj_request_id,
-		proj_cost_time:     time.Now().UnixNano()/1e6 - t,
+		Proj_project_id:    proj_project_id,
+		Proj_model_version: "0.1.0",
+		Proj_service_name:  "websocket",
+		Proj_model_name:    proj_model_name,
+		Proj_request_id:    proj_request_id,
+		Proj_cost_time:     time.Now().UnixNano()/1e6 - t,
 	}
 }
