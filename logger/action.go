@@ -26,12 +26,13 @@ func Push(event string, param form.SendForm) {
 	// 超时时间：5秒
 	client := &http.Client{Timeout: 5 * time.Second}
 	log.Println("gapi_host:{}", gapi_host)
+	log.Println("jsonStr:{}", string(jsonStr))
 	resp, err := client.Post(gapi_host, "application/json;charset=utf-8;", bytes.NewBuffer(jsonStr))
-	//defer resp.Body.Close()
+	defer resp.Body.Close()
 	if err != nil {
 		log.Println(err)
+		resp.Body.Close()
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
-	log.Println("jsonStr:{}", string(jsonStr))
 	log.Println("body:{}", string(body))
 }
