@@ -52,19 +52,24 @@ type Properties struct {
 }
 
 func NewProperties(proj_project_id string, proj_model_name string, proj_request_id string) *Properties {
-	log.Println("proj_request_id:{}", proj_request_id)
-	strArr := strings.FieldsFunc(proj_request_id, func(r rune) bool {
-		if r == '-' {
-			return true
-		} else {
-			return false
+	var t int64
+	var err error
+	t = 0
+	if proj_request_id != "" {
+		strArr := strings.FieldsFunc(proj_request_id, func(r rune) bool {
+			if r == '-' {
+				return true
+			} else {
+				return false
+			}
+		})
+		t, err = strconv.ParseInt(strArr[0], 10, 64)
+		if err != nil {
+			log.Println(err)
+			t = 0
 		}
-	})
-	t, err := strconv.ParseInt(strArr[0], 10, 64)
-	if err != nil {
-		log.Println(err)
-		t = 0
 	}
+
 	return &Properties{
 		Proj_project_id:    proj_project_id,
 		Proj_model_version: "0.1.0",
