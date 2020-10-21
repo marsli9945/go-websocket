@@ -34,8 +34,8 @@ func NewLogContent(event string, device_id string, user_id string, properties Pr
 }
 
 type Lib struct {
-	Lib_service_version string
-	Lib_language        string
+	Lib_service_version string `json:"lib_service_version"`
+	Lib_language        string `json:"lib_language"`
 }
 
 func NewLib(lib_service_version string) *Lib {
