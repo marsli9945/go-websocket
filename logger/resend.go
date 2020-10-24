@@ -129,6 +129,7 @@ func ResendList(conn *impl.Connection, list []string) {
 				if err != nil {
 					log.Println(err)
 				}
+				log.Println("resend successfly")
 			}
 		}
 	}
