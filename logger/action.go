@@ -31,7 +31,7 @@ func Push(event string, param form.SendForm) {
 		log.Println(err)
 	} else {
 		defer resp.Body.Close()
-		body, _ := ioutil.ReadAll(resp.Body)
-		log.Println("body:{}", string(body))
+		ioutil.ReadAll(resp.Body)
+		//log.Println("body:{}", string(body))
 	}
 }
