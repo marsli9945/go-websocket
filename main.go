@@ -6,9 +6,11 @@ import (
 	"github.com/marsli9945/go-websocket/form"
 	"github.com/marsli9945/go-websocket/impl"
 	"github.com/marsli9945/go-websocket/logger"
+	"github.com/marsli9945/go-websocket/resend"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -25,9 +27,6 @@ var (
 	}
 	// 在线用户和链接凭据
 	userList = map[string]*impl.Connection{}
-
-	// 发送错误队列
-	resendList = map[string][][]byte{}
 )
 
 // http返回参数
@@ -86,14 +85,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("+++++++++++注册上线：" + param.Name)
 			conn.Name = param.Name
 			userList[param.Name] = conn
-
-			list, ok := resendList[param.Name]
-			if ok {
-				for _, v := range list {
-					conn.WriteMessage(v)
-				}
-				delete(resendList, param.Name)
-			}
+			resend.Consume(conn, param.Name)
 		}
 
 		if err = conn.WriteMessage(data); err != nil {
@@ -107,6 +99,10 @@ ERR:
 }
 
 func main() {
+
+	// 开启重发队列定时清理
+	go resend.InitFlush()
+
 	// 当有请求访问ws时，执行此回调方法
 	http.HandleFunc("/websocket", wsHandler)
 
@@ -162,11 +158,7 @@ func main() {
 				if err != nil {
 					log.Println(err)
 					go logger.Push("socket_server_push_data_failed", param)
-					list, ok := resendList[param.Name]
-					if !ok {
-						resendList[param.Name] = [][]byte{}
-					}
-					list = append(list, body)
+					resend.Add(param.Name, param.Request_id)
 
 					log.Println(param.Name + "+++++++发送失败")
 					r, _ = json.Marshal(&result{10, param.Name + "推送失败", nil})
@@ -176,6 +168,7 @@ func main() {
 				r, _ = json.Marshal(&result{0, param.Name + "推送成功", nil})
 			} else {
 				go logger.Push("socket_server_push_data_failed", param)
+				resend.Add(param.Name, param.Request_id)
 				delete(userList, param.Name) // 清理断开的连接
 				log.Println(param.Name + "------未上线")
 				r, _ = json.Marshal(&result{401, param.Name + "已断开链接", nil})
@@ -229,6 +222,28 @@ func main() {
 		}
 		r, _ := json.Marshal(&result{0, "操作成功", true})
 		writer.Write(r)
+	})
+
+	http.HandleFunc("/websocket/test", func(writer http.ResponseWriter, request *http.Request) {
+		err := request.ParseForm()
+		if err != nil {
+			log.Println(err)
+		}
+		key := request.Form.Get("key")
+		name := request.Form.Get("name")
+
+		strArr := strings.FieldsFunc(key, func(r rune) bool {
+			if r == ',' {
+				return true
+			} else {
+				return false
+			}
+		})
+
+		log.Println(strArr)
+		log.Println(name)
+
+		logger.ResendList(userList[name], strArr)
 	})
 
 	// 渲染html文件进行测试

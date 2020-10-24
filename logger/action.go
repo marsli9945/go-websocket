@@ -21,9 +21,10 @@ func Push(event string, param form.SendForm) {
 	jsonStr, err := json.Marshal(logContent)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
-	// 超时时间：5秒
+	// 超时时间：2秒
 	client := &http.Client{Timeout: 2 * time.Second}
 	log.Println("gapi_host:{}", gapi_host)
 	log.Println("jsonStr:{}", string(jsonStr))
