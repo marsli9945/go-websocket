@@ -36,6 +36,7 @@ func Add(name string, requestId string) {
 			},
 		}
 	} else {
+		resendList[name].exper = time.Now().Unix()
 		resendList[name].List = append(resendList[name].List, requestId)
 	}
 }
