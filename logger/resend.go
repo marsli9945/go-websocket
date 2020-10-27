@@ -33,8 +33,18 @@ var loginParam = LoginForm{
 	os.Getenv("GAPI_PASSWORD"),
 }
 
-var loginHost = os.Getenv("GAPI_HOST") + "/api/ga/v1/insight/data-service-a/result?key="
-var resendHost = os.Getenv("GAPI_HOST") + "/api/ga/v1/auth/login"
+//var loginParam = LoginForm{
+//	"net5ijy",
+//	"y4cZe@wmGBofIlQ",
+//	"lilei@tuyoogame.com",
+//	"Lilei@123",
+//}
+
+//var resendHost = "https://gapics.touch4.me/api/ga/v1/insight/data-service-a/result?key="
+//var loginHost = "https://gapics.touch4.me/api/ga/v1/auth/login"
+
+var loginHost = os.Getenv("GAPI_HOST") + "/api/ga/v1/auth/login"
+var resendHost = os.Getenv("GAPI_HOST") + "/api/ga/v1/insight/data-service-a/result?key="
 
 func Send(method string, url string, form interface{}, header map[string]string) (response []byte, err error) {
 
@@ -64,6 +74,7 @@ func Send(method string, url string, form interface{}, header map[string]string)
 }
 
 func login() {
+	log.Println("loginParam", loginParam)
 	post, err := Send("POST", loginHost, loginParam, nil)
 	if err != nil {
 		log.Println(err)
@@ -74,6 +85,7 @@ func login() {
 		log.Println(err)
 		return
 	}
+	log.Println("login result:", result)
 	if r, ok := result["data"].(map[string]interface{}); ok {
 		if m, ok := r["access_token"].(string); ok {
 			token.token = m
@@ -112,6 +124,7 @@ func ResendList(conn *impl.Connection, list []string) {
 		return
 	}
 
+	log.Println("result:", result)
 	if code, ok := result["code"].(float64); ok {
 		if code != 0 {
 			return

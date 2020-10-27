@@ -135,6 +135,7 @@ func main() {
 
 			if !ok {
 				go logger.Push("socket_server_push_data_failed", param)
+				resend.Add(param.Name, param.Request_id)
 				log.Println(param.Name + "------未上线")
 				r, _ = json.Marshal(&result{401, param.Name + "已断开链接", nil})
 				_, _ = writer.Write(r)
@@ -144,7 +145,7 @@ func main() {
 			again := 1
 			isOnline := true
 			for v.IsClosed {
-				if again > 30 {
+				if again > 5 {
 					isOnline = false
 					break
 				}
