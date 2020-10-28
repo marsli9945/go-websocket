@@ -7,11 +7,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
-var gapi_host = os.Getenv("GAPI_HOST") + "/api/ga/v1/grow-analytics-log-server/log/send"
+var gapi_host = GapiHost + "/api/ga/v1/grow-analytics-log-server/log/send"
 
 func Push(event string, param form.SendForm) {
 	lib := NewLib(param.Service_version)

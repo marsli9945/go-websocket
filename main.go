@@ -99,6 +99,11 @@ ERR:
 }
 
 func main() {
+	log.Println("gapiHost:", logger.GapiHost)
+	log.Println("gapiClientId:", logger.GapiClientId)
+	log.Println("gapiClientSecret:", logger.GapiClientSecret)
+	log.Println("gapiUsername:", logger.GapiUsername)
+	log.Println("gapiPassword:", logger.GapiPassword)
 
 	// 开启重发队列定时清理
 	go resend.InitFlush()

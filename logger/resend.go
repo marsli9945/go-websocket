@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -27,10 +26,10 @@ type LoginForm struct {
 }
 
 var loginParam = LoginForm{
-	os.Getenv("GAPI_CLIENT_ID"),
-	os.Getenv("GAPI_CLIENT_SECRET"),
-	os.Getenv("GAPI_USERNAME"),
-	os.Getenv("GAPI_PASSWORD"),
+	GapiClientId,
+	GapiClientSecret,
+	GapiUsername,
+	GapiPassword,
 }
 
 //var loginParam = LoginForm{
@@ -43,8 +42,8 @@ var loginParam = LoginForm{
 //var resendHost = "https://gapics.touch4.me/api/ga/v1/insight/data-service-a/result?key="
 //var loginHost = "https://gapics.touch4.me/api/ga/v1/auth/login"
 
-var loginHost = os.Getenv("GAPI_HOST") + "/api/ga/v1/auth/login"
-var resendHost = os.Getenv("GAPI_HOST") + "/api/ga/v1/insight/data-service-a/result?key="
+var loginHost = GapiHost + "/api/ga/v1/auth/login"
+var resendHost = GapiHost + "/api/ga/v1/insight/data-service-a/result?key="
 
 func Send(method string, url string, form interface{}, header map[string]string) (response []byte, err error) {
 
