@@ -13,7 +13,7 @@ import (
 var gapi_host = GapiHost + "/api/ga/v1/grow-analytics-log-server/log/send"
 
 type SendParam struct {
-	Data *LogContent
+	Data *LogContent `json:"data"`
 }
 
 func Push(event string, param form.SendForm) {
