@@ -12,12 +12,17 @@ import (
 
 var gapi_host = GapiHost + "/api/ga/v1/grow-analytics-log-server/log/send"
 
+type SendParam struct {
+	Data *LogContent
+}
+
 func Push(event string, param form.SendForm) {
 	lib := NewLib(param.Service_version)
 	properties := NewProperties(param.Project_id, param.Model_name, param.Request_id)
 	logContent := NewLogContent(event, param.Device_id, param.User_id, *properties, *lib)
+	mm := SendParam{logContent}
 
-	jsonStr, err := json.Marshal(logContent)
+	jsonStr, err := json.Marshal(mm)
 	if err != nil {
 		log.Println(err)
 		return
@@ -32,6 +37,6 @@ func Push(event string, param form.SendForm) {
 	} else {
 		defer resp.Body.Close()
 		ioutil.ReadAll(resp.Body)
-		//log.Println("body:{}", string(body))
+		log.Println("body:{}", string(body))
 	}
 }
