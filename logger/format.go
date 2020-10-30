@@ -25,7 +25,7 @@ func NewLogContent(event string, device_id string, user_id string, properties Pr
 		Device_id:  device_id,
 		User_id:    user_id,
 		Event:      event,
-		Event_time: time.Now().Unix(),
+		Event_time: time.Now().UnixNano() / 1e6,
 		Project_id: "20435",
 		Event_type: "track",
 		Properties: properties,
