@@ -44,6 +44,9 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		conn *impl.Connection
 		data []byte
 	)
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	// 完成http应答，在httpheader中放下如下参数
 	if wsConn, err = upgrader.Upgrade(w, r, nil); err != nil {
 		return // 获取连接失败直接返回
@@ -53,22 +56,6 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		go logger.Push("socket_server_connect_failed", form.SendForm{})
 		goto ERR
 	}
-
-	// 连接成功
-	go logger.Push("socket_server_connect_success", form.SendForm{})
-
-	//go func() {
-	//	var (
-	//		err error
-	//	)
-	//	for {
-	//		// 每隔一秒发送一次心跳
-	//		if err = conn.WriteMessage([]byte(`{"data": []}`)); err != nil {
-	//			return
-	//		}
-	//		time.Sleep(1 * time.Second)
-	//	}
-	//}()
 
 	for {
 		if data, err = conn.ReadMessage(); err != nil {
@@ -83,6 +70,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 
 		if param.Socket_method == "login" {
 			log.Println("+++++++++++注册上线：" + param.Name)
+			// 连接成功
+			go logger.Push("socket_server_connect_success", form.SendForm{
+				Device_id: param.Name,
+			})
 			conn.Name = param.Name
 			userList[param.Name] = conn
 			resend.Consume(conn, param.Name)
@@ -249,7 +240,7 @@ func main() {
 		log.Println(strArr)
 		log.Println(name)
 
-		logger.ResendList(userList[name], strArr)
+		resend.ResendList(name, userList[name], strArr)
 	})
 
 	// 渲染html文件进行测试

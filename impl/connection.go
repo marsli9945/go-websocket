@@ -3,6 +3,8 @@ package impl
 import (
 	"errors"
 	"github.com/gorilla/websocket"
+	"github.com/marsli9945/go-websocket/form"
+	"github.com/marsli9945/go-websocket/logger"
 	"log"
 	"sync"
 )
@@ -53,6 +55,10 @@ func (conn *Connection) Close() {
 		close(conn.closeChan)
 		conn.IsClosed = true
 		log.Println("connect close:{}" + conn.Name)
+		// 上报断开连接
+		go logger.Push("socket_server_connect_close", form.SendForm{
+			Device_id: conn.Name,
+		})
 	}
 	conn.mutex.Unlock()
 }

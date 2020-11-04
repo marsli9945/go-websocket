@@ -1,6 +1,7 @@
 package resend
 
 import (
+	"github.com/marsli9945/go-websocket/form"
 	"github.com/marsli9945/go-websocket/impl"
 	"github.com/marsli9945/go-websocket/logger"
 	"log"
@@ -20,6 +21,12 @@ func InitFlush() {
 		log.Println("resendList", resendList)
 		for k, v := range resendList {
 			if v.exper+15 <= time.Now().Unix() {
+				for _, rv := range v.List {
+					go logger.Push("socket_server_clean_resend", form.SendForm{
+						Request_id: rv,
+						Device_id:  k,
+					})
+				}
 				delete(resendList, k)
 			}
 		}
@@ -44,7 +51,7 @@ func Add(name string, requestId string) {
 func Consume(conn *impl.Connection, name string) {
 	log.Println("resend consume", name)
 	if resend, ok := resendList[name]; ok {
-		go logger.ResendList(conn, resend.List)
+		go ResendList(name, conn, resend.List)
 		delete(resendList, name)
 	}
 }
