@@ -20,7 +20,7 @@ func InitFlush() {
 		time.Sleep(time.Second * 5)
 		log.Println("resendList", resendList)
 		for k, v := range resendList {
-			if v.exper+15 <= time.Now().Unix() {
+			if v.exper+60 <= time.Now().Unix() {
 				for _, rv := range v.List {
 					go logger.Push("socket_server_clean_resend", form.SendForm{
 						Request_id: rv,
@@ -35,6 +35,10 @@ func InitFlush() {
 
 func Add(name string, requestId string) {
 	log.Println("resend add", name, requestId)
+	go logger.Push("socket_server_resend_add", form.SendForm{
+		Device_id:  name,
+		Request_id: requestId,
+	})
 	if _, ok := resendList[name]; !ok {
 		resendList[name] = &resendStuck{
 			time.Now().Unix(),
