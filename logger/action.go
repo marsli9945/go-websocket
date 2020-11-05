@@ -25,7 +25,7 @@ func Push(event string, param form.SendForm) {
 	properties := NewProperties(param.Project_id, param.Model_name, param.Request_id)
 	logContent := NewLogContent(event, param.Device_id, param.User_id, *properties, *lib)
 	logList = append(logList, logContent)
-	if len(logList) < 2 {
+	if len(logList) < 20 {
 		return
 	}
 
