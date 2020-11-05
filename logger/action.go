@@ -10,9 +10,8 @@ import (
 	"time"
 )
 
-var gapi_host = GapiHost + "/v1/grow-analytics-log-server/log/record"
-
-//var gapi_host = GapiHost + "/api/ga/v1/grow-analytics-log-server/log/record"
+//var gapi_host = GapiHost + "/v1/grow-analytics-log-server/log/record"
+var gapi_host = GapiHost + "/api/ga/v1/grow-analytics-log-server/log/record"
 
 type SendParam struct {
 	Data *LogContent `json:"data"`
