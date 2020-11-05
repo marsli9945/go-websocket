@@ -72,7 +72,7 @@ func NewProperties(proj_project_id string, proj_model_name string, proj_request_
 
 	return &Properties{
 		Proj_project_id:    proj_project_id,
-		Proj_model_version: "0.1.0",
+		Proj_model_version: "1.2.7",
 		Proj_service_name:  "websocket",
 		Proj_model_name:    proj_model_name,
 		Proj_request_id:    proj_request_id,

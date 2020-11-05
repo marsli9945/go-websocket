@@ -10,19 +10,26 @@ import (
 	"time"
 )
 
-var gapi_host = GapiHost + "/api/ga/v1/grow-analytics-log-server/log/send"
+var gapi_host = GapiHost + "/v1/grow-analytics-log-server/log/record"
+
+//var gapi_host = GapiHost + "/api/ga/v1/grow-analytics-log-server/log/record"
 
 type SendParam struct {
 	Data *LogContent `json:"data"`
 }
 
+var logList = []*LogContent{}
+
 func Push(event string, param form.SendForm) {
 	lib := NewLib(param.Service_version)
 	properties := NewProperties(param.Project_id, param.Model_name, param.Request_id)
 	logContent := NewLogContent(event, param.Device_id, param.User_id, *properties, *lib)
-	mm := SendParam{logContent}
+	logList = append(logList, logContent)
+	if len(logList) < 2 {
+		return
+	}
 
-	jsonStr, err := json.Marshal(mm)
+	jsonStr, err := json.Marshal(logList)
 	if err != nil {
 		log.Println(err)
 		return
@@ -40,6 +47,7 @@ func Push(event string, param form.SendForm) {
 		if err != nil {
 			log.Println("send error:", err)
 		}
+		logList = []*LogContent{}
 		log.Println("body:{}", string(all))
 	}
 }
