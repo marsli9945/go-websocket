@@ -25,6 +25,7 @@ func InitFlush() {
 					go logger.Push("socket_server_clean_resend", form.SendForm{
 						Request_id: rv,
 						Device_id:  k,
+						User_id:    "10000",
 					})
 				}
 				delete(resendList, k)
@@ -38,6 +39,7 @@ func Add(name string, requestId string) {
 	go logger.Push("socket_server_resend_add", form.SendForm{
 		Device_id:  name,
 		Request_id: requestId,
+		User_id:    "10000",
 	})
 	if _, ok := resendList[name]; !ok {
 		resendList[name] = &resendStuck{

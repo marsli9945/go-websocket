@@ -124,7 +124,6 @@ func main() {
 		log.Println(param.Name + "+++++++开始推送")
 
 		if param.Name == "" {
-			go logger.Push("socket_server_push_data_failed", param)
 			r, _ = json.Marshal(&result{401, "请使用name参数指定接收人", nil})
 		} else {
 			v, ok := userList[param.Name]

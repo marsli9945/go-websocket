@@ -93,6 +93,7 @@ func ResendList(name string, conn *impl.Connection, list []string) {
 										loggerParams := form.SendForm{
 											Device_id:  name,
 											Request_id: rid,
+											User_id:    "10000",
 										}
 										if err != nil {
 											log.Println(err)
