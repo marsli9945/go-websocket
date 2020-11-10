@@ -43,7 +43,8 @@ func Send(method string, url string, form interface{}, header map[string]string)
 	}
 }
 
-func ResendList(name string, conn *impl.Connection, list []string) {
+func ResendList(name string, conn *impl.Connection, resend *resendStuck) {
+	list := resend.List
 	body := ""
 	for i, v := range list {
 		body += v
@@ -81,19 +82,15 @@ func ResendList(name string, conn *impl.Connection, list []string) {
 				log.Println("resend start.............")
 				err = conn.WriteMessage(marshal)
 				if rmsg, ok := msg.(map[string]interface{}); ok {
-					log.Println("rmsg:", rmsg)
 					if rdataList, ok := rmsg["data"].([]interface{}); ok {
 						for _, rinterface := range rdataList {
 							if rdata, ok := rinterface.(map[string]interface{}); ok {
-								log.Println("rdata:", rdata)
 								if rcontent, ok := rdata["content"].(map[string]interface{}); ok {
-									log.Println("rcontent:", rcontent)
 									if rid, ok := rcontent["id"].(string); ok {
-										log.Println("rid:", rid)
 										loggerParams := form.SendForm{
-											Device_id:  name,
+											Device_id:  resend.Device_id,
 											Request_id: rid,
-											User_id:    "10000",
+											User_id:    resend.User_id,
 										}
 										if err != nil {
 											log.Println(err)

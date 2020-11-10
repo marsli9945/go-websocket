@@ -9,8 +9,10 @@ import (
 )
 
 type resendStuck struct {
-	exper int64
-	List  []string
+	Device_id string
+	User_id   string
+	exper     int64
+	List      []string
 }
 
 var resendList = map[string]*resendStuck{}
@@ -24,8 +26,8 @@ func InitFlush() {
 				for _, rv := range v.List {
 					go logger.Push("socket_server_clean_resend", form.SendForm{
 						Request_id: rv,
-						Device_id:  k,
-						User_id:    "10000",
+						Device_id:  v.Device_id,
+						User_id:    v.User_id,
 					})
 				}
 				delete(resendList, k)
@@ -34,30 +36,28 @@ func InitFlush() {
 	}
 }
 
-func Add(name string, requestId string) {
-	log.Println("resend add", name, requestId)
-	go logger.Push("socket_server_resend_add", form.SendForm{
-		Device_id:  name,
-		Request_id: requestId,
-		User_id:    "10000",
-	})
-	if _, ok := resendList[name]; !ok {
-		resendList[name] = &resendStuck{
+func Add(form form.SendForm) {
+	log.Println("resend add", form.Name, form.Request_id)
+	go logger.Push("socket_server_resend_add", form)
+	if _, ok := resendList[form.Name]; !ok {
+		resendList[form.Name] = &resendStuck{
+			form.Device_id,
+			form.User_id,
 			time.Now().Unix(),
 			[]string{
-				requestId,
+				form.Request_id,
 			},
 		}
 	} else {
-		resendList[name].exper = time.Now().Unix()
-		resendList[name].List = append(resendList[name].List, requestId)
+		resendList[form.Name].exper = time.Now().Unix()
+		resendList[form.Name].List = append(resendList[form.Name].List, form.Request_id)
 	}
 }
 
 func Consume(conn *impl.Connection, name string) {
 	log.Println("resend consume", name)
 	if resend, ok := resendList[name]; ok {
-		go ResendList(name, conn, resend.List)
+		go ResendList(name, conn, resend)
 		delete(resendList, name)
 	}
 }

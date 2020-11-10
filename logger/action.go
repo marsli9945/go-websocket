@@ -24,9 +24,11 @@ func Push(event string, param form.SendForm) {
 	properties := NewProperties(param.Project_id, param.Model_name, param.Request_id)
 	logContent := NewLogContent(event, param.Device_id, param.User_id, *properties, *lib)
 	logList = append(logList, logContent)
+	log.Printf("logContent", logContent)
 	if len(logList) < 20 {
 		return
 	}
+	logList = []*LogContent{}
 
 	jsonStr, err := json.Marshal(logList)
 	if err != nil {
@@ -46,7 +48,6 @@ func Push(event string, param form.SendForm) {
 		if err != nil {
 			log.Println("send error:", err)
 		}
-		logList = []*LogContent{}
 		log.Println("body:{}", string(all))
 	}
 }

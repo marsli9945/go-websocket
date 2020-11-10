@@ -10,7 +10,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -130,7 +129,7 @@ func main() {
 
 			if !ok {
 				go logger.Push("socket_server_push_data_failed", param)
-				resend.Add(param.Name, param.Request_id)
+				resend.Add(param)
 				log.Println(param.Name + "------未上线")
 				r, _ = json.Marshal(&result{401, param.Name + "已断开链接", nil})
 				_, _ = writer.Write(r)
@@ -154,20 +153,20 @@ func main() {
 				if err != nil {
 					log.Println(err)
 					go logger.Push("socket_server_push_data_failed", param)
-					resend.Add(param.Name, param.Request_id)
+					resend.Add(param)
 
 					log.Println(param.Name + "+++++++发送失败")
-					r, _ = json.Marshal(&result{10, param.Name + "推送失败", nil})
+					r, _ = json.Marshal(&result{10, param.Name + "推送失败", param})
 				}
 				go logger.Push("socket_server_push_data_success", param)
 				log.Println(param.Name + "+++++++发送成功")
-				r, _ = json.Marshal(&result{0, param.Name + "推送成功", nil})
+				r, _ = json.Marshal(&result{0, param.Name + "推送成功", param})
 			} else {
 				go logger.Push("socket_server_push_data_failed", param)
-				resend.Add(param.Name, param.Request_id)
+				resend.Add(param)
 				delete(userList, param.Name) // 清理断开的连接
 				log.Println(param.Name + "------未上线")
-				r, _ = json.Marshal(&result{401, param.Name + "已断开链接", nil})
+				r, _ = json.Marshal(&result{401, param.Name + "已断开链接", param})
 			}
 		}
 
@@ -218,28 +217,6 @@ func main() {
 		}
 		r, _ := json.Marshal(&result{0, "操作成功", true})
 		writer.Write(r)
-	})
-
-	http.HandleFunc("/websocket/test", func(writer http.ResponseWriter, request *http.Request) {
-		err := request.ParseForm()
-		if err != nil {
-			log.Println(err)
-		}
-		key := request.Form.Get("key")
-		name := request.Form.Get("name")
-
-		strArr := strings.FieldsFunc(key, func(r rune) bool {
-			if r == ',' {
-				return true
-			} else {
-				return false
-			}
-		})
-
-		log.Println(strArr)
-		log.Println(name)
-
-		resend.ResendList(name, userList[name], strArr)
 	})
 
 	// 渲染html文件进行测试
