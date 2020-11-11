@@ -28,13 +28,13 @@ func Push(event string, param form.SendForm) {
 	if len(logList) < 20 {
 		return
 	}
-	logList = []*LogContent{}
 
 	jsonStr, err := json.Marshal(logList)
 	if err != nil {
 		log.Println(err)
 		return
 	}
+	logList = []*LogContent{}
 
 	// 超时时间：2秒
 	client := &http.Client{Timeout: 2 * time.Second}
