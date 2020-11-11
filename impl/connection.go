@@ -58,6 +58,7 @@ func (conn *Connection) Close() {
 		// 上报断开连接
 		go logger.Push("socket_server_connect_close", form.SendForm{
 			Device_id: conn.Name,
+			User_id:   "10000",
 		})
 	}
 	conn.mutex.Unlock()

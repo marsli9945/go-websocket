@@ -72,6 +72,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 			// 连接成功
 			go logger.Push("socket_server_connect_success", form.SendForm{
 				Device_id: param.Name,
+				User_id:   "10000",
 			})
 			conn.Name = param.Name
 			userList[param.Name] = conn
